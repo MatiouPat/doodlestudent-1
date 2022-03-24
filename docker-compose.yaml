@@ -6,10 +6,6 @@ services:
     container_name: tlc_front
     ports:
       - "4200:80"
-    environment:
-      - PROXY_ADDRESS_FORWARDING=true
-    networks:
-      - services-net
     depends_on:
       - api
     volumes:
@@ -20,8 +16,6 @@ services:
     container_name: tlc_api
     ports:
       - "8080:8080"
-    networks:
-      - services-net
     links:
       - db
     depends_on:
@@ -43,8 +37,6 @@ services:
     container_name: tlc_myadmin
     ports:
       - "8082:80"
-    environment:
-      - PMA_ABSOLUTE_URI=https://phpmyadmin.diverse-team.fr
   etherpad:
     image: etherpad/etherpad:latest
     container_name: tlc_etherpad
@@ -67,13 +59,9 @@ services:
     ports:
       - "80:8080"
       - "443:8443"
-    networks:
-      - services-net
     volumes:
       - ./letsencrypt:/etc/letsencrypt
       - ./server-confs:/server-confs:ro
     environment:
       - DISABLE_DEFAULT_SERVER=no
       - MULTISITE=yes
-networks:
-  services-net:
