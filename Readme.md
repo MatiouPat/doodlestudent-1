@@ -13,3 +13,21 @@ Three videos (in french) are available. They present:
 - and a [short code review](https://drive.google.com/file/d/1jxYNfJdtd4r_pDbOthra360ei8Z17tX_/preview) .
 
 For french native speaker that wants to follow the course. The course web page is available [here](https://hackmd.diverse-team.fr/s/SJqu5DjSD).
+
+## Matthieu Pays Rapport
+
+### Etape 1
+
+#### Lancement Front/API
+
+`docker-compose up --build`
+
+Le front sera ainsi accessible sur le port :4200 et le back sur le port 8080
+
+### Etape 2
+
+Nginx bunkerized a été mis en place mais ne renvoit pas le front mais une erreur HTTP 404 car Nginx n'arrive pas à accéder au code source du front. 
+
+### Etape 4
+
+![](deploiement.png)

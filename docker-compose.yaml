@@ -1,0 +1,79 @@
+version: "3.3"
+
+services:
+  front:
+    build: ./front/
+    container_name: tlc_front
+    ports:
+      - "4200:80"
+    environment:
+      - PROXY_ADDRESS_FORWARDING=true
+    networks:
+      - services-net
+    depends_on:
+      - api
+    volumes:
+        - ./server-confs/:/etc/nginx/sites-enabled/
+
+  api:
+    build: ./api/
+    container_name: tlc_api
+    ports:
+      - "8080:8080"
+    networks:
+      - services-net
+    links:
+      - db
+    depends_on:
+      - db
+      - etherpad
+      - mail
+  db:
+    image: mysql
+    container_name: tlc_db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tlc
+      - MYSQL_USER=tlc
+      - MYSQL_PASSWORD=tlc
+  myadmin:
+    image: phpmyadmin
+    container_name: tlc_myadmin
+    ports:
+      - "8082:80"
+    environment:
+      - PMA_ABSOLUTE_URI=https://phpmyadmin.diverse-team.fr
+  etherpad:
+    image: etherpad/etherpad:latest
+    container_name: tlc_etherpad
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./api/APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
+  mail:
+    image: bytemark/smtp
+    container_name: tlc_mail
+    restart: always
+    ports:
+      - "2525:25"
+  bunkerized-nginx:
+    container_name: tlc_bunkerized-nginx
+    image: bunkerity/bunkerized-nginx
+    depends_on:
+      - api
+      - front
+    ports:
+      - "80:8080"
+      - "443:8443"
+    networks:
+      - services-net
+    volumes:
+      - ./letsencrypt:/etc/letsencrypt
+      - ./server-confs:/server-confs:ro
+    environment:
+      - DISABLE_DEFAULT_SERVER=no
+      - MULTISITE=yes
+networks:
+  services-net:
